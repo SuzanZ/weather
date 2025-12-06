@@ -1,0 +1,537 @@
+
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>خريطة الأردن - حالة الخطر (من الملف المرفوع)</title>
+<style>
+  :root{ --panel-bg:#f7f7f7; --accent:#2b6cb0; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+  body{ margin:0; padding:16px; background:linear-gradient(180deg,#fff 0%,#f3f6fb 100%); color:#111; direction:rtl; }
+  .app{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns: 360px 1fr; gap:16px; align-items:start; }
+  .panel{ background:var(--panel-bg); padding:12px; border-radius:12px; box-shadow:0 4px 14px rgba(20,30,50,0.06); }
+  h1{ margin:6px 0 12px; font-size:18px; }
+  label{ display:block; margin-top:8px; font-weight:600; }
+  select,input[type="button"],button{ width:100%; padding:10px; margin-top:8px; border-radius:8px; border:1px solid #d6dbe7; background:#fff; cursor:pointer; font-size:14px; }
+  .legend{ display:flex; gap:8px; margin-top:12px; align-items:center; }
+  .swatch{ width:36px; height:18px; border-radius:4px; border:1px solid rgba(0,0,0,0.06); display:inline-block; }
+  .map-wrap{ background:#fff; padding:10px; border-radius:12px; display:flex; flex-direction:column; gap:8px; align-items:stretch; }
+  svg{ width:100%; height:calc(100vh - 200px); max-height:760px; border-radius:8px; background:transparent; }
+  .gov{ stroke:#333; stroke-width:0.6; cursor:pointer; transition:fill 180ms, opacity 180ms; }
+  .gov:hover{ opacity:0.9; transform: translateY(-1px); }
+  .controls-row{ display:flex; gap:8px; margin-top:8px; }
+  .small{ padding:8px; font-size:13px; }
+  .topbar{ display:flex; gap:8px; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .info{ font-size:13px; color:#374151; }
+  footer{ margin-top:12px; font-size:12px; color:#6b7280; }
+  @media(max-width:880px){ .app{ grid-template-columns: 1fr; } svg{ height:56vh; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="panel">
+    <h1>لوحة تحكم الخريطة</h1>
+    <div class="info">اضغط على أي محافظة لتغيير مستوى الخطر (صفر → منخفض → متوسط → عالي). اختر الحالة الجوية لتغيير لوحات الألوان.</div>
+
+    <label for="weather">الحالة الجوية المتوقعة</label>
+    <select id="weather">
+      <option value="default">عادي</option>
+      <option value="dust">غبار</option>
+      <option value="rain">مطر</option>
+      <option value="thunder">عاصفة رعدية</option>
+      <option value="wind">رياح شديدة</option>
+    </select>
+
+    <label>أدوات</label>
+    <div class="controls-row">
+      <button id="reset" class="small">إعادة تعيين الكل</button>
+      <button id="download" class="small">حفظ كصورة PNG (شفافة)</button>
+    </div>
+
+    <div class="legend" aria-hidden="true">
+      <div style="flex:1">
+        <div style="font-weight:700">مفتاح الألوان</div>
+        <div style="display:flex; gap:6px; margin-top:6px;">
+          <span class="swatch" id="legend-low"></span><small>منخفض</small>
+          <span class="swatch" id="legend-mid"></span><small>متوسط</small>
+          <span class="swatch" id="legend-high"></span><small>عالٍ</small>
+        </div>
+      </div>
+    </div>
+
+    <label style="margin-top:12px">قائمة المحافظات وحالتها</label>
+    <div id="gov-list" style="max-height:260px; overflow:auto; padding:6px; border-radius:8px; background:#fff; border:1px solid #eef2f7"></div>
+
+    <footer>الخريطة مأخوذة من الملف jo.svg المرفوع. تم تجهيز السلوك ليعمل مباشرة مع أي SVG مقسّم إلى أشكال (path, polygon, g...).</footer>
+  </div>
+
+  <div class="map-wrap panel">
+    <div class="topbar">
+      <div style="font-weight:700">خريطة الأردن (مأخوذة من jo.svg)</div>
+      <div class="info">اضغط لزيادة شدة الخطر. اضغط مع الـ Shift لإعادة التعيين لمحافظة منفردة.</div>
+    </div>
+
+    <!-- INLINE SVG START -->
+    <?xml version="1.0"?>
+    
+<!--********* Copyright (c) 2024 Pareto Softare, LLC DBA Simplemaps.com ***************************************
+************* Free for Commercial Use, full terms at  https://simplemaps.com/resources/svg-license ************
+************* Attribution is appreciated! https://simplemaps.com *******************************************-->
+
+<svg baseprofile="tiny" fill="#6f9c76" height="1000" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width=".5" version="1.2" viewbox="0 0 1000 1000" width="1000" xmlns="http://www.w3.org/2000/svg">
+ <g id="features">
+  <path d="M307.1 234.8l2.3 18-1.3 5.7-1.4 0.5-1.6-0.3-3.4-2.7-2.1-0.7-2.3 0.3-2.6 2.2-0.7 1.8 0.3 1.8 0.9 1.8 1 2.2 0.6 3.2-0.3 1.7-1.4 1.9-6.2-0.2-5.8-1.7-2.4 0.8-6.4 2.7-4-5.7-3.7-2.9-0.9-1.8-0.8-2.9-1.3-0.6-1.3 0.9-1.3 1.8-2.2 1.4-3 0.4-5.4-0.3-3.1 0.6-5.6 3.1-4.5 1.3-4.7-0.3-3.2 0.2-2.7 1.2-1.8 2.3-1.3 3.4-2.8 13.7 0.3 3.4 1.1 3.5 2.6 6 0.5 1.9-0.2 1.3-0.8 2.2-12.9-1.6-1.2 0.1 2.4-10.3-2.5 0 0.3-1.3 0.5-0.8 0.8-0.6 0.9-0.5-1.5-2.6-0.7-4.1 0.1-4.2 0.8-2.6-1.7-3.3 0.2-6.5-1-2.2 0-1.5 1.3 0 0 1.5 1.2 0-0.3-2-0.6-1.7-0.7-1.3-0.9-1-0.5-0.7-0.8-2.4 1.8-0.4 0.8-0.6-0.2-0.9-1.1-1.2 0-1.3 1.3 0-0.3-1-0.3-0.2-0.3 0.1-0.4-0.4 2.5-1.7-1.2-1.5 1.3-0.5 1.2-0.8 0-1.7-0.9-0.1-0.5-0.3-0.4-0.4-0.7-0.5 0.4-1.5 0.7-1.5 1.1-1.2 1.7-0.5 0-1.4-1.8-1.8-0.4-0.9-1.3-2-0.8 0-0.9 0.1 0-1.5 2.5 0-0.5-1.4-0.7-4.6 1.2 1.5 0.8-2.4 0.5-0.8 0.2 0.9 0.1 0.5 0.3-0.2 0.8-1.2-1.1-2.7-0.6-5.7-1-1.9 0-1.7 1.3 0 0-1.4-1.6-0.9-0.7-1.6 0-1.8 0.5-0.7 1.3-0.6 1.6-1.5 2.8-3.7 3.4-2.5 0.1 0 4.4 0.6 2.9-1.6 6.2-5.5 10.2-6.5 3.2-0.8 1.2-0.6 1.1-0.2 1 0.1 0.7 0.6 0 0.1 1.7 2.2 20 4.6 1.8 1.1 3.2 3.2 0.9 0.3 2.4 0 0.7 0.4 0.3 1.5-0.3 1.4-0.6 0.9-0.6-0.1 1.6 2.1 1.7 1.6 1.9 0.6 2.7-0.5 4.3 0.4 0.9 2.5-0.6 3.7 0.2 4.2 1.7 3.7 8.4 12.7 1 2.6 0.1 0.9 0.6 0.2 2.3 0.1z" id="JOIR" name="Irbid">
+  </path>
+  <path d="M191 471.8l0.3-12.6-0.1-0.1 0.1 0.1 0.1-0.1 0-0.2-0.1-0.3 1.1-16.2 2.9-15.8 4.2-9.7 2.2 0.3 12.8 0.7 2.6-1.2 2.3-2.3 3.1-5.5 2.2-5.9 1.1-1.5 2.2-1.5 2.3-0.7 5-0.4 2.4-1.5 7-1.8 9.4 0 2.8-0.7 2.3-1 1.3 0.2 1.3 1.3 0.4 15.8-0.4 2-1.1 2-3.2 3.9-0.9 1.6-0.2 1.9 0.3 2.2 1.4 5.6 1.4 3.4 8 8.7 1.2 2.8-0.2 2.1-0.6 1.5 0.2 1.8 1.1 1.3 1.4 1.5 0.4 1.3-0.6 1.4-2.6 3.7-1.2 2.4-3.2 9.8-0.8 1.4-1.4 1.5-1.1 0.9-2 1.9-8.3-1.9-4-0.1-6.3 0.7-5.7 1.8-2.6 0-3.5-0.7-18.6-6.3-14.1-0.5-4 1z" id="JOMD" name="Madaba">
+  </path>
+  <path d="M170.6 582.7l5-4.8 2.1-4 0-6.8 1.2-6.3 8.7-17.3 0.9-6.2-1.3-5.9-2.8-5.4-2-4.4-1.8-5.6-1-5.9 2.4-5.3 2.6-4.6 0.3-4.7-1.4-1.5 3.4-6.3 3.3-8.8 0.8-4.9 0-2.2 4-1 14.1 0.5 18.6 6.3 3.5 0.7 2.6 0 5.7-1.8 6.3-0.7 4 0.1 8.3 1.9 4.5 8 1.2 4.2 0.5 2.8-0.3 2-1.5 4.3-0.7 3.1-0.5 4.2 0.7 2.6 1.8 1.7 56.3 1.3 3.1 21.3 4.3 12.1-9.5 30.3-21.7 40.7-8-8-7.8-5.9-1.5-1.6-1.9-3.3-1.5-1.6-1.9-1.2-6.8-3.1-2.3-1.7-1.7-1.6-0.8-1.6-0.5-1.3-1.3-1.1-29.7-11.9-15.9-0.8-2.6-1-2.6-1.7-2.1-1.9-2.1-0.6-2.4-0.2-3.3 0.5-2.3-0.1-1.8 0.6-1.1 1.7-0.8 4.4-1.9 5.6-1.2 8.8-1.2 2.1-2.1 1.3-3.3-0.3-2.6-0.7-9.3-6.5-1.4-1z" id="JOKA" name="Karak">
+  </path>
+  <path d="M155.1 626.6l1.5-5.2 0.8-5.4 0.7-2.5 1.2-2.6 1.4-1.7 3.2-2.8 1-2.1 0.7-4.8-0.1-4.8 0.5-4.9 2.3-4.9 2.3-2.2 1.4 1 9.3 6.5 2.6 0.7 3.3 0.3 2.1-1.3 1.2-2.1 1.2-8.8 1.9-5.6 0.8-4.4 1.1-1.7 1.8-0.6 2.3 0.1 3.3-0.5 2.4 0.2 2.1 0.6 2.1 1.9 2.6 1.7 2.6 1 15.9 0.8 29.7 11.9 1.3 1.1 0.5 1.3 0.8 1.6 1.7 1.6 2.3 1.7 6.8 3.1 1.9 1.2 1.5 1.6 1.9 3.3 1.5 1.6 7.8 5.9 8 8-14.1 23.9-6.8 2.5-5-1.9-2-0.2-2 0.4-2.3 1.6-1.8 1.9-2.6 1.6-13.2 3.2-17.3 2.3-6.4-0.5-18.4 0.6-7.6-1.2-7.4 0-4.3-0.2-2.1-0.7-2.6-1.3-2.3-3-2.2-3.9-2.4-2.2-2.9-1.5-12.7-9.1-2.8-2.1z" id="JOAT" name="Tafilah">
+  </path>
+  <path d="M155.1 626.6l2.8 2.1 12.7 9.1 2.9 1.5 2.4 2.2 2.2 3.9 2.3 3 2.6 1.3 2.1 0.7 4.3 0.2-1.1 13.5-3.8 17.1-8.3 26.2 0.4 24.2-1.5 6.3-10.8 21.5-2.2 10.7-0.4 5.6 0.9 4 0.9 2.1 1.5 2.5 1.7 2.2 2.2 2.2 2.6 1.5 3 1 3 0.1 2.8-0.4 2.4-0.8 2.4-0.5 4.7-0.2 5.6 1.1 3.4 1.3 3.7 2.1 3.6 3.1 3.3 3.6 2.8 4.3 9.7 22.2 12.1 49.2 9.2 67.5 0.4 1.8 0 0.1-21.9-3.9-27.6-4.7-25.8-4.5-28.9-5-22.1-3.9-20.6-3.6 2.5-1.7 1.2-19.4 1.3-5.6 4-8.7-0.1-3.4-3.9-3.9-2.5 0-0.2-0.7 0-0.6-0.2-0.3-0.9 0.1 0.8-5.8 1.3-4.7 2.5-4 1.8-5.4 0.9-12 1.4-5.3 8.6-23.4 0.8-4.3 0.2-13.1 1.4-7.2 0.7-1.9 0.9-1.6 0.7-1.9 0.1-2.6 2.2-8.5 7.9-11.9 3-7.2 0-6.8-3.8-13.2 0.1-6.1 1.3-3.7 1.8-11.2 1.1-2.7 1.2-2.2 1-2.3 0.5-3-0.6-3.1-2.6-4.3-1-2.3 0-5.1 3.3-8.8 0.9-5.1 8-26.4 10.8-22.2z" id="JOAQ" name="Aqaba">
+  </path>
+  <path d="M199.5 416.9l4.6-10.8 5.9-6.6-3.9-11.8 0-1.6 2-2.8-4.5-17.5 0.5-1.7 1.2-0.7 1.2-0.4 0.9-1 0.1-1.7-1.1-2.4-0.3-1.9-0.1-2.9-0.4-2.4-2-5.1-0.4-10.1 1.1-3.8 3.1-2.6-2-2.7 0.1-2.5 3.2-5.4-1-1.4 0-1.2 0.8-1 1.5-0.7 0-1.7-0.8-2.6 0.9-3.5 1.2-0.1 12.9 1.6 3 3.7 3.1 1.3 4.9 1 0.2 1.9 1.9 0.7 2.5 0.2 16.2-0.4 3.6 0.7 2.6 1.1 2.1 2.1 1.4 1.9 6.8 5.1 1.1 5.6 0.9 1.2 1.5 1.4 1.3 0.6 3.6 2.1-5.4 1.8-5.8 5.7-2.9 1.7-7.1 2.1-2.8 2.3-8.3 10-4.7 3.3-10.8 5.6-2.8 2.5-1.3 2.4 0.4 2 1.3 1.6 2 1 2.5 0.7 4.2 0.7 1.1 1.2 0.3 1.8-2.3 6.7-0.5 2.3-0.3 3.9-2.4 1.5-5 0.4-2.3 0.7-2.2 1.5-1.1 1.5-2.2 5.9-3.1 5.5-2.3 2.3-2.6 1.2-12.8-0.7-2.2-0.3z" id="JOBA" name="Balqa">
+  </path>
+  <path d="M295.1 272.2l1.4-1.9 0.3-1.7-0.6-3.2-1-2.2-0.9-1.8-0.3-1.8 0.7-1.8 2.6-2.2 2.3-0.3 2.1 0.7 3.4 2.7 1.6 0.3 1.4-0.5 1.3-5.7-2.3-18 2.6 0.1 6.9-1 1.2 0.1 1.9 0.8 1.1 0.2 0.9-0.4 2.1-2 1-0.3 2 1.1 6.1 6.1 11.9 8.3 16.4 15.5 2.7 1.6 3.7 1.1 10.4 1.1 3 1.9 6.8 0.8 25.4 3.1 6.7 5.1 3.3-1.9 4 0.1 11.9 3.2 2.6 0.1 2.3-0.8 29.9-20.5 28.4-18.6 0.1 0 20.5-13.2 31.8-20.5 14.7-9.4 17.1-11 31.9-20.5 31.8-20.5 23.6-15.3 32.4-20.4 15.7-9.9 39.8-25.1 45.5-28.3 8.6 31.7 7.7 28.4 6.4 23.6 8.5 31.4 8.8 32.4 12.4 46.1-14.3 4.5-0.2 0.1-0.1 0.2 0.1 0.2 0.2 0.4 9.1 31.6 1.4 3.3 1.8 1.1 35.2-9.8 3.8 2.3 2.8 6.7 3.9 14.8-4.8 7-22.3 19.1 0 1.7-1.9 0.6-3.6 2.7-22 21-6.5 2.8-21.1 6.1-41.7 12.2-41.8 12.1-41.7 12.1-35.1 10.2-6.7 1.9-35.1 10.6-0.1-0.1-0.3-0.1-230.5-80.1-6.6-3.9-5.9-5.5-3.2-1.8-10.1-1-3.4 0.3-2.4 1.1-2 1.5-2.3 1.1-2.8 0.1-2.9-0.9-3.3-2.4-7.4-3.7-7.6-0.7-2.3 0.3-1.9 0.5-3.9 1.5-2.5 0.3-2.9-0.8-4.5-3.5-2.3-1.4-1.9-0.3-2.5 2.6-1.9 1-2.2 0.5-2-0.4-1.9-1.3-0.9-1.5-0.1-2.1 0.5-1.6 0.8-1.3 0.3-1.5-0.6-1.5-1.6-1.7-3.8-1.3-1.9-4.5-2.4-4.1-1.3-1.1-1.5-1-0.9-1.5 0.1-2.2 1.8-3.4 8.4-9.6 2.7-5.4z" id="JOMA" name="Mafraq">
+  </path>
+  <path d="M296.3 616.4l21.7-40.7 9.5-30.3-4.3-12.1-3.1-21.3 198.7 0.3 23.8 25.9 24.1 26.2 0.6 0.7 0.6 0.7 0.6 0.7 0.6 0.7 20.3 24.1 20.4 24 20.4 24 20.4 24 9.2 10.8 0 0.2 0 0.1-0.2 0-1.2 0.8-13.6 7.6-22.5 12.7-20.2 11.4-4.3 3.6-2.4 3.8-5.4 13.4-6.7 16.3-6.1 14.9-8.3 20.2-4 3.6-21.9 4.5-24.8 5.2-26.5 5.6-26.8 5.6-16.5 3.4-16.1 3.3-5.1 2.6-4.4 4.8-10.3 17.5-8.5 14.5-11.6 19.7-11.9 20.2-14.4 11.9-21.5 17.9-19.7 16.3-20.1 16.7-4.8 1.9-5.1 0.2-19.3-3.3-21.4-3.7-10.6-1.8 0-0.1-0.4-1.8-9.2-67.5-12.1-49.2-9.7-22.2-2.8-4.3-3.3-3.6-3.6-3.1-3.7-2.1-3.4-1.3-5.6-1.1-4.7 0.2-2.4 0.5-2.4 0.8-2.8 0.4-3-0.1-3-1-2.6-1.5-2.2-2.2-1.7-2.2-1.5-2.5-0.9-2.1-0.9-4 0.4-5.6 2.2-10.7 10.8-21.5 1.5-6.3-0.4-24.2 8.3-26.2 3.8-17.1 1.1-13.5 7.4 0 7.6 1.2 18.4-0.6 6.4 0.5 17.3-2.3 13.2-3.2 2.6-1.6 1.8-1.9 2.3-1.6 2-0.4 2 0.2 5 1.9 6.8-2.5 14.1-23.9z" id="JOMN" name="Ma`an">
+  </path>
+  <path d="M258.1 477.8l2-1.9 1.1-0.9 1.4-1.5 0.8-1.4 3.2-9.8 1.2-2.4 2.6-3.7 0.6-1.4-0.4-1.3-1.4-1.5-1.1-1.3-0.2-1.8 0.6-1.5 0.2-2.1-1.2-2.8-8-8.7-1.4-3.4-1.4-5.6-0.3-2.2 0.2-1.9 0.9-1.6 3.2-3.9 1.1-2 0.4-2-0.4-15.8-1.3-1.3-1.3-0.2-2.3 1-2.8 0.7-9.4 0-7 1.8 0.3-3.9 0.5-2.3 2.3-6.7-0.3-1.8-1.1-1.2-4.2-0.7-2.5-0.7-2-1-1.3-1.6-0.4-2 1.3-2.4 2.8-2.5 10.8-5.6 4.7-3.3 8.3-10 2.8-2.3 7.1-2.1 2.9-1.7 5.8-5.7 5.4-1.8 4.3 5.6 4.5 4.2 6.2 7.6 3.6 2.6 2.5 0.8 3.6-2.1 2.3-0.5 3-0.2 9.1-3 12 0.1 3.8-0.7 2.4-1.5 3.5-4.3 2.2-1.9 4-0.9 19.6 1.7 3.9 1.8 3.9 3.2 10.5 11.6 5.3 7 0.4 3.5-1.7 2.6-5.3 3.3-4.1 3.4-1.4 2-0.3 2 1.2 2.4 5 5.8 8.3 7.7 8.1 5.6 4.3 1.6 3.5-0.1 8.8-5.4 3.2-0.9 3.4 0.8 52 53.3 0.6 0.3 0.1 0.1-7.1 2.1 24.1 26.3 24.2 26.3 0.4 0.4-198.7-0.3-56.3-1.3-1.8-1.7-0.7-2.6 0.5-4.2 0.7-3.1 1.5-4.3 0.3-2-0.5-2.8-1.2-4.2-4.5-8z" id="JOAM" name="Amman">
+  </path>
+  <path d="M280.9 338.1l-3.6-2.1-1.3-0.6-1.5-1.4-0.9-1.2-1.1-5.6 7-9.4 2.1-1.7 3-1.7 2.4-1.2 1.6-1.6 0.9-1.9 0.6-4.7 3.8 1.3 1.6 1.7 0.6 1.5-0.3 1.5-0.8 1.3-0.5 1.6 0.1 2.1 0.9 1.5 1.9 1.3 2 0.4 2.2-0.5 1.9-1 2.5-2.6 1.9 0.3 2.3 1.4 4.5 3.5 2.9 0.8 2.5-0.3 3.9-1.5 1.9-0.5 2.3-0.3 7.6 0.7 7.4 3.7 3.3 2.4 2.9 0.9 2.8-0.1 2.3-1.1 2-1.5 2.4-1.1 3.4-0.3 10.1 1 3.2 1.8 5.9 5.5 6.6 3.9 230.5 80.1 0.3 0.1 0.1 0.1-10.9 3.3-46 13.8-46 13.8-38.9 11.7-0.1-0.1-0.6-0.3-52-53.3-3.4-0.8-3.2 0.9-8.8 5.4-3.5 0.1-4.3-1.6-8.1-5.6-8.3-7.7-5-5.8-1.2-2.4 0.3-2 1.4-2 4.1-3.4 5.3-3.3 1.7-2.6-0.4-3.5-5.3-7-10.5-11.6-3.9-3.2-3.9-1.8-19.6-1.7-4 0.9-2.2 1.9-3.5 4.3-2.4 1.5-3.8 0.7-12-0.1-9.1 3-3 0.2-2.3 0.5-3.6 2.1-2.5-0.8-3.6-2.6-6.2-7.6-4.5-4.2-4.3-5.6z" id="JOAZ" name="Zarqa">
+  </path>
+  <path d="M224.2 307.9l0.8-2.2 0.2-1.3-0.5-1.9-2.6-6-1.1-3.5-0.3-3.4 2.8-13.7 1.3-3.4 1.8-2.3 2.7-1.2 3.2-0.2 4.7 0.3 4.5-1.3 5.6-3.1 3.1-0.6 5.4 0.3 3-0.4 2.2-1.4 1.3-1.8 1.3-0.9 1.3 0.6 0.8 2.9 0.9 1.8 3.7 2.9 4 5.7-4 2.2-2 0.8-2.9 2-2.9 2.9-3.1 5-1.3 3.6-0.6 3.1 0.2 2-0.4 2-1.7 1.9-12.7 5.8-7.7 8.8-4.9-1-3.1-1.3-3-3.7z" id="JOAJ" name="Ajlun">
+  </path>
+  <path d="M274.3 273.8l6.4-2.7 2.4-0.8 5.8 1.7 6.2 0.2-2.7 5.4-8.4 9.6-1.8 3.4-0.1 2.2 0.9 1.5 1.5 1 1.3 1.1 2.4 4.1 1.9 4.5-0.6 4.7-0.9 1.9-1.6 1.6-2.4 1.2-3 1.7-2.1 1.7-7 9.4-6.8-5.1-1.4-1.9-2.1-2.1-2.6-1.1-3.6-0.7-16.2 0.4-2.5-0.2-1.9-0.7-0.2-1.9 7.7-8.8 12.7-5.8 1.7-1.9 0.4-2-0.2-2 0.6-3.1 1.3-3.6 3.1-5 2.9-2.9 2.9-2 2-0.8 4-2.2z" id="JOJA" name="Jarash">
+  </path>
+ </g>
+ <g id="points">
+  <circle class="29.399037437882072|35.16651581589536" cx="137.1" cy="910" id="0">
+  </circle>
+  <circle class="31.071731183332716|37.33782282591918" cx="540.3" cy="550.4" id="1">
+  </circle>
+  <circle class="33.162598365146025|39.07486843393824" cx="862.9" cy="91.9" id="2">
+  </circle>
+ </g>
+ <g id="label_points">
+  <circle class="Irbid" cx="252.3" cy="225.3" id="JOIR">
+  </circle>
+  <circle class="Madaba" cx="232.4" cy="444.1" id="JOMD">
+  </circle>
+  <circle class="Karak" cx="237.6" cy="534.6" id="JOKA">
+  </circle>
+  <circle class="Tafilah" cx="222.7" cy="611.7" id="JOAT">
+  </circle>
+  <circle class="Aqaba" cx="166.6" cy="859.5" id="JOAQ">
+  </circle>
+  <circle class="Balqa" cx="229.5" cy="343.6" id="JOBA">
+  </circle>
+  <circle class="Mafraq" cx="669.7" cy="266.1" id="JOMA">
+  </circle>
+  <circle class="Ma`an" cx="416.4" cy="670.9" id="JOMN">
+  </circle>
+  <circle class="Amman" cx="352.6" cy="447.8" id="JOAM">
+  </circle>
+  <circle class="Zarqa" cx="489.3" cy="411.6" id="JOAZ">
+  </circle>
+  <circle class="Ajlun" cx="243.2" cy="286" id="JOAJ">
+  </circle>
+  <circle class="Jarash" cx="271.5" cy="304.1" id="JOJA">
+  </circle>
+ </g>
+</svg>
+    <!-- INLINE SVG END -->
+
+  </div>
+</div>
+
+<script>
+/* ====== read SVG and initialize ====== */
+const svg = document.querySelector('svg');
+if(!svg){ alert('الملف SVG لا يحتوي على وسم <svg> صالح.'); }
+svg.setAttribute('id','svgmap');
+
+// find candidate shapes inside svg to be considered 'governorates'
+const candidateSelectors = ['path','polygon','polyline','rect','g','circle','ellipse'];
+let candidates = [];
+candidateSelectors.forEach(sel=>{
+  const found = Array.from(svg.querySelectorAll(sel));
+  candidates = candidates.concat(found);
+});
+
+// keep only visible shapes (with a non-empty bbox)
+candidates = candidates.filter(el=>{
+  try{
+    const bb = el.getBBox();
+    return bb.width>0 || bb.height>0;
+  }catch(e){
+    return false;
+  }
+});
+
+// Assign class 'gov' to candidates that look like regions and ensure they have id and data-name
+candidates.forEach((el, idx)=>{
+  if(!el.classList.contains('gov')) el.classList.add('gov');
+  if(!el.id) {
+    const title = el.querySelector && el.querySelector('title');
+    if(title && title.textContent.trim()) el.id = 'gov-' + title.textContent.trim().replace(/\s+/g,'-');
+    else el.id = 'gov-' + (idx+1);
+  }
+  if(!el.dataset.name) {
+    const nameAttr = el.getAttribute('data-name') || el.getAttribute('name') || (el.querySelector? (el.querySelector('title')? el.querySelector('title').textContent.trim() : '') : '');
+    el.dataset.name = nameAttr || el.id.replace(/^gov-?/,'').replace(/[-_]/g,' ');
+  }
+  el.style.cursor = 'pointer';
+  const fill = el.getAttribute('fill') || window.getComputedStyle(el).fill;
+  if(!fill || fill==='none' || fill==='#ffffff' || fill==='rgb(255, 255, 255)') {
+    el.style.fill = '#ffffff';
+  }
+  if(!el.getAttribute('stroke')) el.style.stroke = '#333';
+});
+
+/* ====== palette and state ====== */
+const govElements = Array.from(svg.querySelectorAll('.gov'));
+const govList = document.getElementById('gov-list');
+const weatherSelect = document.getElementById('weather');
+const legendLow = document.getElementById('legend-low');
+const legendMid = document.getElementById('legend-mid');
+const legendHigh = document.getElementById('legend-high');
+
+let state = {}; // id -> level 0..3
+
+const palettes = {
+  default: ['#FFF59D','#FFB74D','#E53935'],
+  dust:    ['#FFEEAD','#FFB86B','#D35400'],
+  rain:    ['#BBDEFB','#64B5F6','#1565C0'],
+  thunder: ['#E1BEE7','#BA68C8','#6A1B9A'],
+  wind:    ['#FFE0B2','#FFCC80','#FF6F00']
+};
+
+// init
+govElements.forEach(el=>{
+  state[el.id] = 0;
+  el.dataset.level = '0';
+  el.style.strokeWidth = el.style.strokeWidth || '0.6';
+// حفظ اللون الأصلي
+  el.dataset.originalFill = el.style.fill;
+});
+
+function updatePaletteUI(){
+  const pal = palettes[weatherSelect.value] || palettes.default;
+  legendLow.style.background = pal[0];
+  legendMid.style.background = pal[1];
+  legendHigh.style.background = pal[2];
+}
+
+function applyColors(){
+  govElements.forEach(el=>{
+    const lvl = Number(el.dataset.level || 0);
+    // ألوان المحافظات تعتمد فقط على مستوى الخطر
+    if (lvl === 0) el.style.fill = '#ffffff';
+    else if (lvl === 1) el.style.fill = '#FFF59D';
+    else if (lvl === 2) el.style.fill = '#FFB74D';
+    else if (lvl === 3) el.style.fill = '#E53935';
+  });
+  refreshList();
+}
+
+// click handlers
+govElements.forEach(el=>{
+  el.addEventListener('click', (ev)=>{
+    const shift = ev.shiftKey;
+    if(shift){
+      el.dataset.level = '0';
+    } else {
+      const cur = Number(el.dataset.level||0);
+      el.dataset.level = String((cur+1)%4);
+    }
+    applyColors();
+  });
+});
+
+function refreshList(){
+  govList.innerHTML='';
+  const entries = govElements.map(el=>({id:el.id, name:el.dataset.name||el.id, level:Number(el.dataset.level||0)}));
+  entries.sort((a,b)=> a.name.localeCompare(b.name,'ar'));
+  entries.forEach(it=>{
+    const div = document.createElement('div');
+    div.style.display='flex';
+    div.style.justifyContent='space-between';
+    div.style.alignItems='center';
+    div.style.padding='6px';
+    div.style.borderBottom='1px solid #f1f5f9';
+    div.innerHTML = `<div>${it.name}</div><div style="display:flex; gap:8px; align-items:center">
+      <small style="color:#666">${it.level===0? 'لا خطر' : it.level===1? 'منخفض' : it.level===2? 'متوسط' : 'عالٍ'}</small>
+      <button class="small" data-id="${it.id}">✕</button>
+    </div>`;
+    govList.appendChild(div);
+    div.querySelector('button').addEventListener('click', ()=>{
+      document.getElementById(it.id).dataset.level = '0';
+      applyColors();
+    });
+  });
+}
+
+document.getElementById('reset').addEventListener('click', ()=>{
+  govElements.forEach(el=> el.dataset.level = '0');
+  applyColors();
+});
+
+weatherSelect.addEventListener('change', ()=>{
+  updatePaletteUI();
+  applyColors();
+});
+
+/* ====== download PNG (transparent) ====== */
+document.getElementById('download').addEventListener('click', ()=>{
+  const svgEl = document.getElementById('svgmap');
+  const clone = svgEl.cloneNode(true);
+  const box = svgEl.viewBox && svgEl.viewBox.baseVal && svgEl.viewBox.baseVal.width ? svgEl.viewBox.baseVal : svgEl.getBBox();
+  const width = Math.ceil((svgEl.viewBox && svgEl.viewBox.baseVal && svgEl.viewBox.baseVal.width) || box.width || 1000);
+  const height = Math.ceil((svgEl.viewBox && svgEl.viewBox.baseVal && svgEl.viewBox.baseVal.height) || box.height || 900);
+  clone.setAttribute('width', width);
+  clone.setAttribute('height', height);
+
+  // inline styles for governorates
+  const pal = palettes[weatherSelect.value] || palettes.default;
+  Array.from(clone.querySelectorAll('.gov')).forEach(g=>{
+    const lvl = Number(g.dataset.level || 0);
+    let fill = '#ffffff';
+    if(lvl===1) fill = pal[0];
+    else if(lvl===2) fill = pal[1];
+    else if(lvl===3) fill = pal[2];
+    g.setAttribute('style', `fill:${fill};stroke:#333;stroke-width:0.6`);
+  });
+
+  const svgString = new XMLSerializer().serializeToString(clone);
+  const svgBlob = new Blob([svgString], {type:'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(svgBlob);
+  const img = new Image();
+  img.onload = function(){
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,width,height);
+    ctx.drawImage(img,0,0,width,height);
+    URL.revokeObjectURL(url);
+    const png = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = png;
+    a.download = 'jordan_map.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+  img.onerror = function(){ alert('فشل تحويل SVG إلى صورة. حاول استخدام متصفح حديث (Chrome/Firefox).'); URL.revokeObjectURL(url); };
+  img.src = url;
+});
+
+
+// === إضافة أسماء المحافظات تلقائياً على الخريطة ===
+govElements.forEach(el => {
+  const bb = el.getBBox();
+  const cx = bb.x + bb.width/2;
+  const cy = bb.y + bb.height/2;
+
+  const label = document.createElementNS("http://www.w3.org/2000/svg","text");
+  label.setAttribute("x", cx);
+  label.setAttribute("y", cy);
+  label.setAttribute("text-anchor","middle");
+  label.setAttribute("alignment-baseline","central");
+  label.setAttribute("font-size","14");
+  label.setAttribute("fill","#111");
+  label.textContent = el.dataset.name;
+  svg.appendChild(label);
+});
+
+// --- الحالات الجوية بالأرقام ---
+const weatherCodes = {
+  1: "سيول",
+  2: "أمطار غزيرة",
+  3: "ثلوج",
+  4: "عواصف رعدية",
+  5: "غبار",
+  6: "عواصف غبارية",
+  7: "ضباب",
+  8: "صقيع",
+  9: "انجماد",
+  10: "رياح شديدة",
+  11: "موجة حر"
+};
+
+// --- ألوان خاصة للحالات الجوية ---
+const weatherColors = {
+  1: "#0097A7",   // سيول
+  2: "#1565C0",   // أمطار غزيرة
+  3: "#90CAF9",   // ثلوج
+  4: "#6A1B9A",   // عواصف رعدية
+  5: "#F9A825",   // غبار
+  6: "#EF6C00",   // عواصف غبارية
+  7: "#90A4AE",   // ضباب
+  8: "#0277BD",   // صقيع
+  9: "#004D40",   // انجماد
+  10: "#C62828",  // رياح شديدة
+  11: "#D84315"   // موجة حر
+};
+
+// إنشاء Layer لنصوص الحالات الجوية
+const labelLayer = document.createElementNS("http://www.w3.org/2000/svg","g");
+svg.appendChild(labelLayer);
+
+// إضافة نص اسم المحافظة (أسود)
+govElements.forEach(el => {
+    const bb = el.getBBox();
+    const cx = bb.x + bb.width/2;
+    const cy = bb.y + bb.height/2;
+
+    const label = document.createElementNS("http://www.w3.org/2000/svg","text");
+    label.setAttribute("x", cx);
+    label.setAttribute("y", cy);
+    label.setAttribute("text-anchor","middle");
+    label.setAttribute("alignment-baseline","central");
+    label.setAttribute("font-size","16");
+    label.setAttribute("fill","#000");   // <<< لون أسود
+    label.textContent = el.dataset.name;
+    el.dataset.labelId = `lbl-${el.id}`;
+    label.id = el.dataset.labelId;
+
+    svg.appendChild(label);
+});
+
+// إضافة حقل اختيار حالة جوية لكل محافظة في القائمة الجانبية
+function refreshList(){
+  govList.innerHTML='';
+
+  const sorted = govElements.map(el=>({
+      id: el.id,
+      name: el.dataset.name,
+      level: Number(el.dataset.level||0),
+      weather: Number(el.dataset.weather||0)
+  })).sort((a,b)=> a.name.localeCompare(b.name,"ar"));
+
+  sorted.forEach(item=>{
+      const wrap = document.createElement("div");
+      wrap.style.cssText = "padding:6px;border-bottom:1px solid #eee;";
+
+      wrap.innerHTML = `
+        <div style="font-weight:600">${item.name}</div>
+        <div style="margin-top:4px">
+          مستوى الخطر: 
+          <strong>${ item.level===0? "لا خطر" : item.level===1? "منخفض" : item.level===2? "متوسط" : "عالٍ" }</strong>
+        </div>
+
+        <div style="margin-top:4px">
+          الحالة الجوية:
+          <select data-id="${item.id}" class="wxSel">
+            <option value="0">— لا يوجد —</option>
+            ${Object.keys(weatherCodes).map(n=>`
+              <option value="${n}" ${item.weather==n?"selected":""}>${n} - ${weatherCodes[n]}</option>
+            `).join("")}
+          </select>
+        </div>
+      `;
+
+      govList.appendChild(wrap);
+  });
+
+  // عند تغيير حالة جوية لمحافظة
+  document.querySelectorAll(".wxSel").forEach(sel=>{
+    sel.addEventListener("change", e=>{
+        const id = e.target.dataset.id;
+        const val = Number(e.target.value);
+        const region = document.getElementById(id);
+
+        region.dataset.weather = val;
+
+        // لون المحافظة وفق الحالة الجوية
+        const circle = document.getElementById("wx-circle-"+id);
+const num = document.getElementById("wx-num-"+id);
+
+if(val === 0){
+    region.style.fill="#fff";
+    label.textContent = region.dataset.name;
+
+    circle.style.display = "none";
+    num.style.display = "none";
+} 
+else {
+    // تلوين المنطقة
+    region.style.fill = weatherColors[val];
+
+    // عرض رقم الحالة داخل الدائرة
+    circle.style.display = "block";
+    circle.setAttribute("fill", weatherColors[val]);
+
+    num.style.display = "block";
+    num.textContent = val;
+
+    // إعادة الاسم الطبيعي (بدون الرقم)
+    label.textContent = region.dataset.name;
+}
+
+
+        // تحديث النص فوق المحافظة
+        const lblId = region.dataset.labelId;
+        const lbl = document.getElementById(lblId);
+        lbl.textContent =
+           val === 0
+           ? region.dataset.name
+           : `${val} - ${weatherCodes[val]}`;
+
+    });
+  });
+}
+
+// ===== إضافة دائرة رقم الحالة الجوية لكل محافظة =====
+
+// طبقة خاصة لوضع الدوائر فوق المحافظات وتحت الأسماء
+const wxLayer = document.createElementNS("http://www.w3.org/2000/svg", "g");
+svg.insertBefore(wxLayer, labelLayer);  // قبل أسماء المحافظات
+
+govElements.forEach(el => {
+    const bb = el.getBBox();
+    const cx = bb.x + bb.width/2;
+    const cy = bb.y + bb.height/2;
+
+    // موقع الدائرة: بجانب الاسم وإلى الأعلى قليلاً
+    const wxX = cx - 20;   // الإزاحة الأفقية
+    const wxY = cy - 22;   // الإزاحة الرأسية
+
+    // دائرة الحالة الجوية
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", wxX);
+    circle.setAttribute("cy", wxY);
+    circle.setAttribute("r", 13);
+    circle.setAttribute("fill", "#fff");
+    circle.setAttribute("stroke", "#333");
+    circle.setAttribute("stroke-width", "2");
+    circle.style.display = "none"; // مخفية إلى أن يتم اختيار حالة
+    circle.id = "wx-circle-" + el.id;
+
+    // رقم الحالة داخل الدائرة
+    const num = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    num.setAttribute("x", wxX);
+    num.setAttribute("y", wxY + 4);
+    num.setAttribute("text-anchor", "middle");
+    num.setAttribute("alignment-baseline", "middle");
+    num.setAttribute("font-size", "14");
+    num.setAttribute("font-weight", "bold");
+    num.setAttribute("fill", "#000");
+    num.style.display = "none";
+    num.id = "wx-num-" + el.id;
+    num.textContent = "";
+
+    wxLayer.appendChild(circle);
+    wxLayer.appendChild(num);
+});
+
+
+// start
+updatePaletteUI();
+applyColors();
+refreshList();
+
+</script>
+</body>
+</html>
