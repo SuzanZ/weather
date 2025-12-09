@@ -36,10 +36,10 @@
     <label for="weather">الحالة الجوية المتوقعة</label>
     <select id="weather">
       <option value="default">عادي</option>
-      <option value="dust">غبار</option>
-      <option value="rain">مطر</option>
-      <option value="thunder">عاصفة رعدية</option>
-      <option value="wind">رياح شديدة</option>
+    //  <option value="dust">غبار</option>
+    //  <option value="rain">مطر</option>
+    //  <option value="thunder">عاصفة رعدية</option>
+    //  <option value="wind">رياح شديدة</option>
     </select>
 
     <label>أدوات</label>
@@ -502,10 +502,10 @@ govElements.forEach(el => {
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     circle.setAttribute("cx", wxX);
     circle.setAttribute("cy", wxY);
-    circle.setAttribute("r", 13);
+    circle.setAttribute("r", 17);
     circle.setAttribute("fill", "#fff");
     circle.setAttribute("stroke", "#333");
-    circle.setAttribute("stroke-width", "2");
+    circle.setAttribute("stroke-width", "3");
     circle.style.display = "none"; // مخفية إلى أن يتم اختيار حالة
     circle.id = "wx-circle-" + el.id;
 
