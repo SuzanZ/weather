@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>خريطة الأردن - حالة الخطر (من الملف المرفوع)</title>
 <style>
-  :root{ --panel-bg:#f7f7f7; --accent:#2b6cb0; font-family: "Segoe UI", Times New Roman, Arial, sans-serif; }
+  :root{ --panel-bg:#f7f7f7; --accent:#2b6cb0; font-family: "Segoe UI", "Times New Roman", Arial, sans-serif; }
   body{ margin:0; padding:16px; background:linear-gradient(180deg,#fff 0%,#f3f6fb 100%); color:#111; direction:rtl; }
   .app{ max-width:1200px; margin:0 auto; display:grid; grid-template-columns: 360px 1fr; gap:16px; align-items:start; }
   .panel{ background:var(--panel-bg); padding:12px; border-radius:12px; box-shadow:0 4px 14px rgba(20,30,50,0.06); }
@@ -36,10 +36,6 @@
     <label for="weather">الحالة الجوية المتوقعة</label>
     <select id="weather">
       <option value="default">عادي</option>
-    //  <option value="dust">غبار</option>
-    //  <option value="rain">مطر</option>
-    //  <option value="thunder">عاصفة رعدية</option>
-    //  <option value="wind">رياح شديدة</option>
     </select>
 
     <label>أدوات</label>
@@ -502,7 +498,7 @@ govElements.forEach(el => {
     const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     circle.setAttribute("cx", wxX);
     circle.setAttribute("cy", wxY);
-    circle.setAttribute("r", 17);
+    circle.setAttribute("r", 13);
     circle.setAttribute("fill", "#fff");
     circle.setAttribute("stroke", "#333");
     circle.setAttribute("stroke-width", "3");
@@ -515,7 +511,7 @@ govElements.forEach(el => {
     num.setAttribute("y", wxY + 4);
     num.setAttribute("text-anchor", "middle");
     num.setAttribute("alignment-baseline", "middle");
-    num.setAttribute("font-size", "16");
+    num.setAttribute("font-size", "14");
     num.setAttribute("font-weight", "bold");
     num.setAttribute("fill", "#000");
     num.style.display = "none";
